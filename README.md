@@ -3,7 +3,10 @@
 A small slide engine driven entirely by data. Adding a course or a class means writing a
 content file, not writing HTML.
 
-## Run it
+Live: https://zinoadidi.github.io/teaching-decks/ (served directly from `main` via GitHub
+Pages, pure static files, no build step).
+
+## Run it locally
 
 ```bash
 python3 -m http.server 8778 --directory /Users/zinoadidi/Documents/GitLab/zinospot/decks
