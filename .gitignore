@@ -1,5 +1,6 @@
 .DS_Store
 *.log
 node_modules/
-# game content, not public, pending migration to the CRUD backend
-collections/gliderverse/
+# game content, not public (local source for the knockout collection;
+# the live site serves it from the generic-crud backend instead)
+collections/knockout/
