@@ -12,6 +12,7 @@
   const qs         = new URLSearchParams(location.search);
   const collection = qs.get('collection');
   const n          = Math.max(1, +qs.get('deck') || 1);
+  const token      = qs.get('token');
   const BACKEND    = 'https://generic-crud.agreeabledesert-b2caaf68.norwayeast.azurecontainerapps.io/generic-crud';
   const APP_ID     = '7d125c22-d3bf-480f-bc09-af3c16aff513';
 
@@ -32,7 +33,9 @@
 
   if(!collection) return fail('No collection was given in the address.');
 
-  const getDoc = id => fetch(BACKEND + '/api/store/' + APP_ID + '/' + id)
+  const getDoc = id => fetch(BACKEND + '/api/store/' + APP_ID + '/' + id, {
+      headers: token ? { 'x-app-token': token } : {}
+    })
     .then(r => { if(!r.ok) throw new Error('"' + collection + '" was not found, locally or on the backend.'); return r.json(); })
     .then(r => r.doc);
 

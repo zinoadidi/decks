@@ -19,7 +19,10 @@
 </div>
 <div class="wrap" id="wrap"></div>
 <script>
-  const id = new URLSearchParams(location.search).get('collection');
+  const params = new URLSearchParams(location.search);
+  const id = params.get('collection');
+  const token = params.get('token');
+  const tokenQS = token ? '&token=' + encodeURIComponent(token) : '';
   const wrap = document.getElementById('wrap');
   const BACKEND = 'https://generic-crud.agreeabledesert-b2caaf68.norwayeast.azurecontainerapps.io/generic-crud';
   const APP_ID = '7d125c22-d3bf-480f-bc09-af3c16aff513';
@@ -32,7 +35,7 @@
       '<h1>'+C.name.replace(/^(\S+)/,'$1<br>')+'</h1><div class="rule"></div>' +
       (C.subtitle?'<p class="lead">'+C.subtitle+'</p>':'') +
       '<div class="tiles">' + C.decks.map((c,n) =>
-        '<a class="tile a'+((n%3)+1)+'" href="deck.html?collection='+encodeURIComponent(C.id)+'&deck='+(n+1)+'">' +
+        '<a class="tile a'+((n%3)+1)+'" href="deck.html?collection='+encodeURIComponent(C.id)+'&deck='+(n+1)+tokenQS+'">' +
           '<div class="n">'+c.label.toUpperCase()+'</div>' +
           '<h3>'+c.title+'</h3>' +
           '<p>'+(c.blurb||'')+'</p>' +
@@ -41,7 +44,9 @@
 
   const notFound = () => wrap.innerHTML = '<h2>No collection called "'+id+'".</h2><p><a class="backlink" href="index.html">All collections</a></p>';
 
-  const fromBackend = () => fetch(BACKEND + '/api/store/' + APP_ID + '/' + id + '.collection')
+  const fromBackend = () => fetch(BACKEND + '/api/store/' + APP_ID + '/' + id + '.collection', {
+      headers: token ? { 'x-app-token': token } : {}
+    })
     .then(r => { if(!r.ok) throw 0; return r.json(); })
     .then(r => render(r.doc))
     .catch(notFound);
@@ -50,7 +55,7 @@
     wrap.innerHTML = '<h2>No collection was given.</h2><p><a class="backlink" href="index.html">All collections</a></p>';
   } else {
     const el = document.createElement('script');
-    el.src = 'collections/'+id+'/collection.js?v=7';
+    el.src = 'collections/'+id+'/collection.js?v=8';
     el.onerror = fromBackend;
     el.onload = () => render(window.COLLECTION);
     document.head.appendChild(el);
