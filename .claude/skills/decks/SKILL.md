@@ -1,6 +1,6 @@
 ---
-name: teaching-decks
-description: Author slide decks in the data-driven teaching-decks engine, where collections and decks are plain JavaScript data files rendered by three generic HTML pages. Use this skill whenever the user wants to add a collection, add or edit a deck, write or restructure slides, add flashcards, adjust deck timing, add engine screenshots, change themes, or asks anything about the decks repo at Documents/GitLab/zinospot/decks. Use it even when the user only says something like "add a new deck", "make slides for X", "the deck is too crowded" or "add another collection" without naming the engine, because writing HTML by hand or inventing a new structure breaks the whole point of this setup.
+name: decks
+description: Author slide decks in the data-driven decks engine, where collections and decks are plain JavaScript data files rendered by three generic HTML pages. Use this skill whenever the user wants to add a collection, add or edit a deck, write or restructure slides, add flashcards, adjust deck timing, add engine screenshots, change themes, or asks anything about the decks repo at Documents/GitLab/zinospot/decks. Use it even when the user only says something like "add a new deck", "make slides for X", "the deck is too crowded" or "add another collection" without naming the engine, because writing HTML by hand or inventing a new structure breaks the whole point of this setup.
 ---
 
 # Decks

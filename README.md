@@ -3,7 +3,7 @@
 A small slide engine driven entirely by data. Adding a collection or a deck means writing a
 content file, not writing HTML.
 
-Live: https://zinoadidi.github.io/teaching-decks/ (served directly from `main` via GitHub
+Live: https://zinoadidi.github.io/decks/ (served directly from `main` via GitHub
 Pages, pure static files, no build step).
 
 ## Run it locally
@@ -153,4 +153,4 @@ change does not appear, bump that number in the three HTML pages.
 
 `AUTHORING.md` is the full feature reference: every slide type, every block, timing, themes, keys and the test script. Read it before adding a collection or a deck.
 
-A Claude skill lives in `.claude/skills/teaching-decks/` and is also installed at `~/.claude/skills/teaching-decks/`, so it is available in any session.
+A Claude skill lives in `.claude/skills/decks/` and is also installed at `~/.claude/skills/decks/`, so it is available in any session.
