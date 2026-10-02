@@ -1,6 +1,6 @@
 /* AD-051 deck renderer: turns a content JSON into slide markup.
    The template never changes. Each class supplies its own JSON. */
-window.AD051 = (function(){
+window.RENDER = (function(){
 
   const esc = t => String(t==null?'':t);
   const attr = t => esc(t).replace(/"/g,'&quot;');

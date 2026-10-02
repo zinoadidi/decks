@@ -1,4 +1,4 @@
-/* Theme handling for the index and course pages. The deck has its own copy inside deck.js. */
+/* Theme handling for the index and collection pages. The deck has its own copy inside deck.js. */
 (function(){
   const THEMES = [
     { id:'dark',  name:'Dark',  icon:'◐' },

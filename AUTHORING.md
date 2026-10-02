@@ -1,12 +1,12 @@
 # Authoring reference
 
-Everything the deck engine can do. Load this file when adding a course or a class.
+Everything the deck engine can do. Load this file when adding a collection or a deck.
 
-The engine is data-driven: three generic HTML pages render every course from JavaScript data
-files. **You never write HTML for a course.**
+The engine is data-driven: three generic HTML pages render every collection from JavaScript
+data files. **You never write HTML for a collection.**
 
-- [Adding a course](#adding-a-course)
-- [Adding a class](#adding-a-class)
+- [Adding a collection](#adding-a-collection)
+- [Adding a deck](#adding-a-deck)
 - [Slide types](#slide-types)
 - [Blocks](#blocks)
 - [Build-in reveals](#build-in-reveals)
@@ -21,28 +21,28 @@ files. **You never write HTML for a course.**
 
 ---
 
-## Adding a course
+## Adding a collection
 
 Three steps. No HTML.
 
 **1. Make the folders**
 
 ```bash
-mkdir -p courses/<id>/content courses/<id>/notes
+mkdir -p collections/<id>/content collections/<id>/notes
 ```
 
-**2. Write `courses/<id>/course.js`**
+**2. Write `collections/<id>/collection.js`**
 
 ```js
-window.COURSE = {
+window.COLLECTION = {
   id:"<id>",
-  name:"XX-000 Course Name",
-  subtitle:"One line describing the course",
+  name:"XX-000 Collection Name",
+  subtitle:"One line describing the collection",
   year:"2026/27",
   instructor:"Name",
-  classes:[
-    { file:"class-1.html", data:"class-1.js", label:"Class 1", title:"Class title",
-      blurb:"One or two lines shown on the course page tile." }
+  decks:[
+    { file:"deck-1.html", data:"deck-1.js", label:"Deck 1", title:"Deck title",
+      blurb:"One or two lines shown on the collection page tile." }
   ]
 };
 ```
@@ -50,38 +50,38 @@ window.COURSE = {
 `file` is legacy and unused by the loader; keep it for readability. `data` is the filename
 inside `content/` and is what actually gets loaded.
 
-**3. Add one line to `courses.js`**
+**3. Add one line to `collections.js`**
 
 ```js
-{ id:"<id>", name:"XX-000 Course Name", subtitle:"...", year:"2026/27", classes:1, accent:2 }
+{ id:"<id>", name:"XX-000 Collection Name", subtitle:"...", year:"2026/27", decks:1, accent:2 }
 ```
 
 `accent` is 1, 2 or 3 and only picks the colour stripe on the tile.
 
 ---
 
-## Adding a class
+## Adding a deck
 
-1. Write `courses/<id>/content/class-N.js`
-2. Add an entry to the `classes` array in that course's `course.js`
+1. Write `collections/<id>/content/deck-N.js`
+2. Add an entry to the `decks` array in that collection's `collection.js`
 
 A content file sets one global:
 
 ```js
 window.DECK = {
-  meta:{ course:"XX-000 Course Name", label:"Class 2", title:"Class title", start:"17:45" },
+  meta:{ collection:"XX-000 Collection Name", label:"Deck 2", title:"Deck title", start:"17:45" },
   slides:[ /* ... */ ]
 };
 ```
 
 | meta key | Purpose |
 |---|---|
-| `course` | Full course name, used in the deck's own header text |
+| `collection` | Full collection name, used in the deck's own header text |
 | `label` | Short name, shown in the breadcrumb and overview switcher |
-| `title` | Class title, becomes the browser tab title |
+| `title` | Deck title, becomes the browser tab title |
 | `start` | Wall-clock start time. Every slide's clock is computed from it |
 
-Open it at `deck.html?course=<id>&class=N`.
+Open it at `deck.html?collection=<id>&deck=N`.
 
 ---
 
@@ -104,8 +104,8 @@ Opens the deck.
 
 ```js
 {type:"title", sec:"XX-000", title:"Title", m:0,
- kicker:"XX-000 Course Name",
- h1:"First line<br>and the {Highlighted}", lead:"Class 1 of 3",
+ kicker:"XX-000 Collection Name",
+ h1:"First line<br>and the {Highlighted}", lead:"Deck 1 of 3",
  notes:["Press T to start the timer."]}
 ```
 
@@ -115,7 +115,7 @@ multi-angle reference sheet, the same rule as a `shots` item.
 
 ### `section`
 
-A divider between blocks of a class.
+A divider between blocks of a deck.
 
 ```js
 {type:"section", sec:"Block A", title:"1. Section name", m:2, num:"01", shapes:"c",
@@ -361,7 +361,7 @@ slide. Pressing `←` always goes back a whole slide.
 ## Timing
 
 Slides store an **offset in minutes**, not a fixed time. The engine computes wall-clock times
-from `meta.start`, so moving a class is a one-line change.
+from `meta.start`, so moving a deck is a one-line change.
 
 ```js
 meta:{ ..., start:"17:45" }   // slide with m:25 shows a target of 18:10
@@ -407,23 +407,23 @@ Nothing is committed to the repo, so it stays small and carries no vendor images
 that a clone needs a network connection for images to appear.
 
 **Always write a `fallback`.** If the image fails to load, or there is no network in the
-lecture room, the slide shows the fallback text instead and the class still works. Put the
+lecture room, the slide shows the fallback text instead and the deck still works. Put the
 menu path in it:
 
 ```js
 fallback:"UNITY<br>Edit → Project Settings → Player<br><br>Other Settings → Optimization"
 ```
 
-Keep a catalogue of verified image paths in your own `courses/<id>/notes/engine-screenshots.md` as you confirm them, so the next class in the same course doesn't repeat the search.
+Keep a catalogue of verified image paths in your own `collections/<id>/notes/engine-screenshots.md` as you confirm them, so the next deck in the same collection doesn't repeat the search.
 
 To find new ones: open the vendor doc page in a browser and read the image URLs out of the
 DOM. Epic's server returns 403 to non-browser requests, so `curl` will not work for Unreal.
 
-**A course's own art** (not a vendor screenshot) also works in `shots.items[].img`. Any
+**A collection's own art** (not a vendor screenshot) also works in `shots.items[].img`. Any
 `img` value that is not one of the `u:`/`g:`/`e:` prefixes is used as a path or URL as-is,
 relative to the site root (where `deck.html` is served from). If the art lives in a sibling
 project folder rather than under `decks/`, symlink it in rather than committing large binaries
-into this repo, e.g. `ln -s ../../../other-project/assets courses/<id>/assets`.
+into this repo, e.g. `ln -s ../../../other-project/assets collections/<id>/assets`.
 
 ---
 
@@ -444,7 +444,7 @@ be most of them. The overview grid lets a presenter skip the track that does not
 ## Themes
 
 Three themes, cycled with `D` or the toolbar button, remembered in `localStorage` and shared
-across every page and course.
+across every page and collection.
 
 | Theme | Look | For |
 |---|---|---|
@@ -470,14 +470,14 @@ same way the theme is:
 |---|---|---|---|
 | `sans` | Inter | Inter | The default. Works in all three themes |
 | `serif` | Source Serif 4 | Source Serif 4 | An editorial, less "tech deck" feel |
-| `display` | Bebas Neue | Inter | Condensed, high-impact headlines over a plain readable body. Fits a game/esports brand better than an all-serif or all-sans deck; used by the `gliderverse` course |
+| `display` | Bebas Neue | Inter | Condensed, high-impact headlines over a plain readable body. Fits a game/esports brand better than an all-serif or all-sans deck; used by the `gliderverse` collection |
 
 `display` is the only preset where headline and body differ; it sets `--font-head`
 separately from `--font` rather than swapping both, which is the standard pitch-deck
 pairing (punchy display face for titles, a plain face for everything that needs to be read
 quickly).
 
-A class can set its own starting preset with `meta.font`, which only applies the first time
+A deck can set its own starting preset with `meta.font`, which only applies the first time
 someone opens that deck on a given browser; an explicit `G` press always wins after that:
 
 ```js
@@ -486,13 +486,13 @@ meta:{ ..., font:"serif" }
 
 Monospace text (`code`, the clock, kbd hints) always uses `--mono` regardless of this
 setting; the font picker only affects body and heading text. To add a fourth preset: add its
-family to the Google Fonts link in `index.html`, `course.html` and `deck.html`, add a
+family to the Google Fonts link in `index.html`, `collection.html` and `deck.html`, add a
 `--font-<id>` variable and a `:root[data-font="<id>"]` rule in `engine/deck.css`, and add
 `{id, name, icon}` to the `FONTS` array in `engine/deck.js`.
 
-`localStorage` is one key for the whole site, not scoped per course. Once `G` has been
-pressed anywhere, that preset follows the visitor into every other course until they press
-`G` again. `meta.font` only sets what a brand-new visitor sees on their very first deck.
+`localStorage` is one key for the whole site, not scoped per collection. Once `G` has been
+pressed anywhere, that preset follows the visitor into every other collection until they
+press `G` again. `meta.font` only sets what a brand-new visitor sees on their very first deck.
 
 ---
 
@@ -524,12 +524,13 @@ directly, so confirm a `.pptx` is actually required before doing the conversion.
 | `→` / `Space` | Next build-in step, then next slide |
 | `←` | Previous slide |
 | `R` | Reveal the next step |
-| `O` | Overview grid, plus the course and class switcher |
-| `H` | Back to this course |
-| `[` / `]` | Previous / next class |
+| `O` | Overview grid, plus the collection and deck switcher |
+| `H` | Back to this collection |
+| `[` / `]` | Previous / next deck |
 | `N` | Presenter notes |
 | `T` | Start / stop the timer |
 | `D` | Cycle theme |
+| `G` | Cycle font |
 | `F` | Fullscreen |
 | `?` | Shortcuts |
 | `Esc` | Close a panel |
@@ -538,10 +539,10 @@ Addresses:
 
 | Page | URL |
 |---|---|
-| All courses | `index.html` |
-| One course | `course.html?course=<id>` |
-| One class | `deck.html?course=<id>&class=<n>` |
-| One slide | `deck.html?course=<id>&class=<n>#/18` |
+| All collections | `index.html` |
+| One collection | `collection.html?collection=<id>` |
+| One deck | `deck.html?collection=<id>&deck=<n>` |
+| One slide | `deck.html?collection=<id>&deck=<n>#/18` |
 
 Slides are deep-linkable and the hash updates live as you navigate.
 
@@ -559,7 +560,7 @@ python3 -m http.server 8778 --directory /path/to/decks
 **Validate the data file first**, which catches syntax errors fast:
 
 ```bash
-node -e "global.window={};require('./courses/<id>/content/class-1.js');
+node -e "global.window={};require('./collections/<id>/content/deck-1.js');
 const d=window.DECK; console.log('slides:', d.slides.length);"
 ```
 
@@ -587,25 +588,25 @@ Also worth checking: no `{{` left unresolved in `document.body.innerText`, and
 `document.querySelectorAll('figure.failed').length` is 0.
 
 **Caching:** shared assets carry a version query such as `deck.js?v=7`. If you edit anything
-in `engine/` and the change does not appear, bump that number in `index.html`, `course.html`
-and `deck.html`.
+in `engine/` and the change does not appear, bump that number in `index.html`,
+`collection.html` and `deck.html`.
 
 ---
 
 ## Speaker notes page
 
-Every class gets a standalone speaker notes page the presenter opens on a second screen or
+Every deck gets a standalone speaker notes page the presenter opens on a second screen or
 prints. It is separate from the deck's own `notes` array, which stays short.
 
-**File:** `courses/<id>/notes/class-N-speaker-notes.html`, served at
-`localhost:8778/courses/<id>/notes/class-N-speaker-notes.html`.
+**File:** `collections/<id>/notes/deck-N-speaker-notes.html`, served at
+`localhost:8778/collections/<id>/notes/deck-N-speaker-notes.html`.
 
 **Template:** build the page using the parts table below; once you've written the first one
-for a course, copy that file and keep its CSS and structure for the rest of that course's
-classes, replacing the header, the nav anchors (one per section) and the cards.
+for a collection, copy that file and keep its CSS and structure for the rest of that
+collection's decks, replacing the header, the nav anchors (one per section) and the cards.
 
 **One card per slide**, numbered to match the deck counter (1-based), grouped under an
-`h2.block` per section. The number links to `../../../deck.html?course=<id>&class=N#/<n>`.
+`h2.block` per section. The number links to `../../../deck.html?collection=<id>&deck=N#/<n>`.
 The time on the right is the slide's `m:` offset.
 
 Each card uses these parts, all optional except the heading:

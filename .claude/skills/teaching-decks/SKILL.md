@@ -1,16 +1,17 @@
 ---
 name: teaching-decks
-description: Author lecture slide decks in the data-driven teaching-decks engine, where courses and classes are plain JavaScript data files rendered by three generic HTML pages. Use this skill whenever the user wants to add a course, add or edit a class, write or restructure slides, add flashcards, adjust class timing, add engine screenshots, change themes, or asks anything about the decks repo at Documents/GitLab/zinospot/decks. Use it even when the user only says something like "add a new class", "make slides for X", "the deck is too crowded" or "add another course" without naming the engine, because writing HTML by hand or inventing a new structure breaks the whole point of this setup.
+description: Author slide decks in the data-driven teaching-decks engine, where collections and decks are plain JavaScript data files rendered by three generic HTML pages. Use this skill whenever the user wants to add a collection, add or edit a deck, write or restructure slides, add flashcards, adjust deck timing, add engine screenshots, change themes, or asks anything about the decks repo at Documents/GitLab/zinospot/decks. Use it even when the user only says something like "add a new deck", "make slides for X", "the deck is too crowded" or "add another collection" without naming the engine, because writing HTML by hand or inventing a new structure breaks the whole point of this setup.
 ---
 
-# Teaching decks
+# Decks
 
 A deck engine where **all content is data**. Three generic HTML pages (`index.html`,
-`course.html`, `deck.html`) render every course from JavaScript files under `courses/`.
+`collection.html`, `deck.html`) render every collection from JavaScript files under
+`collections/`.
 
-**The one rule: never write HTML for a course.** If a slide cannot be expressed with the
-existing blocks, add a block renderer to `engine/render.js` so every course gets it, rather
-than hand-rolling markup in a content file.
+**The one rule: never write HTML for a collection.** If a slide cannot be expressed with the
+existing blocks, add a block renderer to `engine/render.js` so every collection gets it,
+rather than hand-rolling markup in a content file.
 
 Repo: `/Users/zinoadidi/Documents/GitLab/zinospot/decks`
 
@@ -24,31 +25,31 @@ before writing content. This file is the workflow; that file is the API.
 
 ```
 decks/
-  index.html course.html deck.html   generic, never edited per course
-  courses.js                         one line per course
-  AUTHORING.md                       the reference
+  index.html collection.html deck.html   generic, never edited per collection
+  collections.js                         one line per collection
+  AUTHORING.md                           the reference
   engine/  render.js boot.js deck.js theme.js deck.css pages.css
-  courses/<id>/
-    course.js                        window.COURSE, lists the classes
-    content/class-N.js               window.DECK, the slides
-    notes/*.md                       the written source behind the deck
+  collections/<id>/
+    collection.js                        window.COLLECTION, lists the decks
+    content/deck-N.js                    window.DECK, the slides
+    notes/*.md                           the written source behind the deck
 ```
 
-## Adding a course
+## Adding a collection
 
-1. `mkdir -p courses/<id>/content courses/<id>/notes`
-2. Write `courses/<id>/course.js` with `window.COURSE = {id, name, subtitle, year, instructor, classes:[...]}`
-3. Add one line to `courses.js`
-4. Write each `courses/<id>/content/class-N.js`
+1. `mkdir -p collections/<id>/content collections/<id>/notes`
+2. Write `collections/<id>/collection.js` with `window.COLLECTION = {id, name, subtitle, year, instructor, decks:[...]}`
+3. Add one line to `collections.js`
+4. Write each `collections/<id>/content/deck-N.js`
 
-`courses/demo101/content/class-1.js` is a living example: one slide per block type, each
+`collections/demo101/content/deck-1.js` is a living example: one slide per block type, each
 showing the data that produced it. Read it when you need to see a block in use.
 
-## Writing a class
+## Writing a deck
 
 Work from the notes, not from scratch. If the user has source material (a PDF, a prior
-course, their own notes), put the prose in `courses/<id>/notes/` first and derive the deck
-from it. The notes can be fuller than the deck; the deck carries the spine.
+collection, their own notes), put the prose in `collections/<id>/notes/` first and derive the
+deck from it. The notes can be fuller than the deck; the deck carries the spine.
 
 Then plan the shape before writing slide objects:
 
@@ -76,11 +77,11 @@ paragraph about polygon budgets.
 
 ## Speaker notes page
 
-Once a class deck is written and tested, also write its speaker notes page:
-`courses/<id>/notes/class-N-speaker-notes.html`. Follow "Speaker notes page" in AUTHORING.md
-for the structure; once you've written the first one for a course, copy that file as the
-template for the rest of that course's classes. One card per slide, numbered like the deck,
-each with plain-word
+Once a deck is written and tested, also write its speaker notes page:
+`collections/<id>/notes/deck-N-speaker-notes.html`. Follow "Speaker notes page" in
+AUTHORING.md for the structure; once you've written the first one for a collection, copy that
+file as the template for the rest of that collection's decks. One card per slide, numbered
+like the deck, each with plain-word
 explanations of the slide's terms, two or three lines the presenter can say, and every cue
 from the slide's `notes`. The presenter asked for simple words and easy reading during the
 talk, so keep terms short and say lines conversational. Confirm the card count matches the
@@ -108,13 +109,13 @@ overflows, and that is invisible in the data.
 **Syntax and structure:**
 
 ```bash
-node -e "global.window={};require('./courses/<id>/content/class-1.js');
+node -e "global.window={};require('./collections/<id>/content/deck-1.js');
 console.log('slides:', window.DECK.slides.length);"
 ```
 
 **Overflow**, at 1920x1080, with every reveal forced open. The script is in AUTHORING.md
 under "Testing a deck". Serve the folder with `python3 -m http.server`, open
-`deck.html?course=<id>&class=1`, run it, and fix any slide it reports by splitting it.
+`deck.html?collection=<id>&deck=1`, run it, and fix any slide it reports by splitting it.
 
 Also confirm: no `{{` left in `document.body.innerText`, and no `figure.failed` if the deck
 uses screenshots.
@@ -126,7 +127,7 @@ pages, or the browser will serve the old file and your change will look like a n
 
 Vendor images are hotlinked with a prefix (`u:` Unity, `g:` Godot, `e:` Unreal) so nothing
 is committed. **Every `shots` item needs a `fallback`** with the menu path in it, because the
-lecture room may have no network. Keep a `courses/<id>/notes/engine-screenshots.md`
+lecture room may have no network. Keep a `collections/<id>/notes/engine-screenshots.md`
 catalogue of verified paths as you confirm them.
 
 ## Themes

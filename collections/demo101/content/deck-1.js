@@ -1,6 +1,6 @@
-/* DEMO-101 Class 1: every block type the engine supports, with the data that produced it. */
+/* DEMO-101 Deck 1: every block type the engine supports, with the data that produced it. */
 window.DECK = {
-meta:{ course:"DEMO-101 Deck Template", label:"Class 1", title:"Every Block Type", start:"10:00" },
+meta:{ collection:"DEMO-101 Deck Template", label:"Deck 1", title:"Every Block Type", start:"10:00" },
 slides:[
 
 {type:"title", sec:"DEMO-101", title:"Title slide", m:0,
@@ -12,7 +12,7 @@ slides:[
  h2:"A slide is just data",
  blocks:[
   {b:"code", html:"{type:<span class=\"c-st\">\"content\"</span>, kicker:<span class=\"c-st\">\"Authoring\"</span>, h2:<span class=\"c-st\">\"A slide is just data\"</span>,\n blocks:[ ... ],\n notes:[<span class=\"c-st\">\"shown with N\"</span>]}"},
-  {b:"p", seq:true, big:true, html:"No HTML is written by hand. Add a data file, add one line to the course, and the deck exists."}]},
+  {b:"p", seq:true, big:true, html:"No HTML is written by hand. Add a data file, add one line to the collection, and the deck exists."}]},
 
 {type:"section", sec:"Blocks", title:"Section divider", m:2, num:"01",
  h2:"The blocks", lead:"One slide each, in the order you are most likely to need them."},
@@ -80,10 +80,24 @@ slides:[
     cap:"Images are hotlinked from vendor documentation. If one fails, the fallback text shows instead, so the slide still works offline."}]},
   {b:"p", seq:true, big:true, html:"Prefixes: <code>u:</code> Unity docs, <code>g:</code> Godot docs, <code>e:</code> Unreal docs. Click a shot to enlarge."}]},
 
+{type:"content", sec:"Blocks", title:"media", m:20, kicker:"b: media", h2:"media",
+ blocks:[
+  {b:"media", img:"u:class-TextureImporter.png", alt:"Unity Texture Import Settings",
+   cap:"Any local or hotlinked image works here, same as shots.",
+   blocks:[
+    {b:"hero", c:3, h:"An image beside a column of other blocks",
+     p:"Use it instead of a shots figure followed by a paragraph, when a slide is one image plus a few lines of text. Add reverse:true to put the image on the right."}]},
+  {b:"code", seq:true, html:"{b:<span class=\"c-st\">\"media\"</span>, img:<span class=\"c-st\">\"...\"</span>, blocks:[ ... ]}"}]},
+
 {type:"content", sec:"Blocks", title:"Track badges", track:"3D", m:21, kicker:"Slide option", h2:"Track badges",
  blocks:[
   {b:"hero", c:5, ic:"◐", h:"Add track:\"2D\" or track:\"3D\" to a slide",
    p:"It appears next to the kicker, so a mixed cohort knows which slides apply to them. This slide is tagged 3D."}]},
+
+{type:"content", sec:"Text width", title:"Wide and justified text", m:22, kicker:"p / lead option", h2:"wide, full, justify",
+ blocks:[
+  {b:"lead", wide:true, html:"A <code>lead</code> or <code>p</code> block defaults to a readable column width. Add <code>wide:true</code> for more of it, or <code>full:true</code> to use the whole slide."},
+  {b:"p", full:true, justify:true, html:"Add <code>justify:true</code> on a wide or full block to align both edges instead of just the left, which some people prefer for dense paragraphs. This paragraph is set to full:true and justify:true, so it stretches the entire width of the slide and both its edges line up, the same way a printed column does."}]},
 
 {type:"content", sec:"Timing", title:"Timing", m:23, kicker:"Slide option", h2:"Timing is computed",
  blocks:[
@@ -120,11 +134,19 @@ slides:[
   {kind:"ans", label:"Step 3. Green", html:"<p><code>kind:\"ans\"</code> for the answer or the fix.</p>"},
   {kind:"lsn", label:"Takeaway", html:"<p><code>kind:\"lsn\"</code> for the closing principle, in amber.</p>"}]},
 
-{type:"content", sec:"Wrap", title:"Adding a course", m:50, kicker:"How to reuse this", h2:"Adding a course takes three steps",
+{type:"content", sec:"Wrap", title:"Fonts and export", m:49, kicker:"Presentation", h2:"Fonts and export",
+ blocks:[
+  {b:"table", head:["Thing","How"], rows:[
+   ["Font preset","Press G, or set meta.font to \"sans\", \"serif\", or \"display\""],
+   ["Theme","Press D to cycle dark, light, ember"],
+   ["PDF export","Open the deck, print, save as PDF. Build-ins print fully open."]]},
+  {b:"p", seq:true, big:true, html:"display pairs a condensed headline face over the regular body font, for a punchier title than sans or serif alone."}]},
+
+{type:"content", sec:"Wrap", title:"Adding a collection", m:50, kicker:"How to reuse this", h2:"Adding a collection takes three steps",
  blocks:[{b:"flow", seq:true, items:[
-   {s:"01", b:"Make a folder", d:"courses/&lt;id&gt;/ with a content/ folder inside"},
-   {s:"02", b:"Write course.js", d:"Name, and one entry per class"},
-   {s:"03", b:"Add one line", d:"To courses.js at the root"}]},
+   {s:"01", b:"Make a folder", d:"collections/&lt;id&gt;/ with a content/ folder inside"},
+   {s:"02", b:"Write collection.js", d:"Name, and one entry per deck"},
+   {s:"03", b:"Add one line", d:"To collections.js at the root"}]},
   {b:"p", seq:true, big:true, html:"No HTML is written. The pages are generic and read everything from the data."}]}
 
 ]};

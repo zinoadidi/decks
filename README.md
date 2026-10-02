@@ -1,6 +1,6 @@
-# Teaching decks
+# Decks
 
-A small slide engine driven entirely by data. Adding a course or a class means writing a
+A small slide engine driven entirely by data. Adding a collection or a deck means writing a
 content file, not writing HTML.
 
 Live: https://zinoadidi.github.io/teaching-decks/ (served directly from `main` via GitHub
@@ -18,59 +18,62 @@ Then open `http://localhost:8778`.
 
 ```
 decks/
-  index.html              all courses          (generic, never edited)
-  course.html             classes in a course  (generic, never edited)
-  deck.html               the deck itself      (generic, never edited)
-  courses.js              one line per course
+  index.html              all collections           (generic, never edited)
+  collection.html         decks in a collection      (generic, never edited)
+  deck.html               the deck itself            (generic, never edited)
+  collections.js          one line per collection
 
   engine/
     render.js             turns slide data into markup
     deck.js               navigation, build-in, reveals, timer
-    boot.js               loads the right course and class from the URL
+    boot.js               loads the right collection and deck from the URL
     deck.css              deck styling
-    pages.css             index and course page styling
+    pages.css             index and collection page styling
 
-  courses/
+  collections/
     demo101/
-      course.js
-      content/class-1.js  a worked example of every block type
+      collection.js
+      content/deck-1.js   a worked example of every block type
 ```
 
-Three generic HTML pages serve every course. Nothing under `courses/` is HTML.
+Three generic HTML pages serve every collection. Nothing under `collections/` is HTML.
 
 ## Addresses
 
 | Page | URL |
 |---|---|
-| All courses | `index.html` |
-| One course | `course.html?course=demo101` |
-| One class | `deck.html?course=demo101&class=1` |
-| One slide | `deck.html?course=demo101&class=1#/5` |
+| All collections | `index.html` |
+| One collection | `collection.html?collection=demo101` |
+| One deck | `deck.html?collection=demo101&deck=1` |
+| One slide | `deck.html?collection=demo101&deck=1#/5` |
 
-## Adding a course
+`index.html` also has a text field: type a collection id and press Open to jump straight to
+`collection.html?collection=<id>`, no need to edit the URL by hand.
 
-1. `mkdir -p courses/<id>/content`
-2. Write `courses/<id>/course.js`:
+## Adding a collection
+
+1. `mkdir -p collections/<id>/content`
+2. Write `collections/<id>/collection.js`:
 
 ```js
-window.COURSE = {
+window.COLLECTION = {
   id:"<id>", name:"...", subtitle:"...", year:"...", instructor:"...",
-  classes:[
-    { file:"class-1.html", data:"class-1.js", label:"Class 1", title:"...", blurb:"..." }
+  decks:[
+    { file:"deck-1.html", data:"deck-1.js", label:"Deck 1", title:"...", blurb:"..." }
   ]
 };
 ```
 
-3. Write `courses/<id>/content/class-1.js`, which sets `window.DECK = { meta, slides }`.
-4. Add one line to `courses.js`.
+3. Write `collections/<id>/content/deck-1.js`, which sets `window.DECK = { meta, slides }`.
+4. Add one line to `collections.js`.
 
-Adding a class to an existing course is steps 3 and the `classes` array only.
+Adding a deck to an existing collection is steps 3 and the `decks` array only.
 
-## Writing a class
+## Writing a deck
 
 ```js
 window.DECK = {
-  meta:{ course:"...", label:"Class 1", title:"...", start:"17:45" },
+  meta:{ collection:"...", label:"Deck 1", title:"...", start:"17:45" },
   slides:[ ... ]
 };
 ```
@@ -96,18 +99,19 @@ window.DECK = {
 | `→` / `Space` | Next build-in step, then next slide |
 | `←` | Previous slide |
 | `R` | Reveal |
-| `O` | Overview grid, and the course switcher |
-| `H` | Back to this course |
-| `[` / `]` | Previous / next class |
+| `O` | Overview grid, and the collection switcher |
+| `H` | Back to this collection |
+| `[` / `]` | Previous / next deck |
 | `N` | Presenter notes |
 | `T` | Start / stop timer |
 | `D` | Cycle theme: dark, light, ember |
+| `G` | Cycle font: sans, serif, display |
 | `F` | Fullscreen |
 | `?` | Shortcuts |
 
 ## Schedule
 
-Slides store an offset in minutes, so a class moves with one line:
+Slides store an offset in minutes, so a deck moves with one line:
 
 ```js
 meta:{ ..., start:"17:45" }
@@ -116,7 +120,7 @@ meta:{ ..., start:"17:45" }
 ## Themes
 
 Three themes, cycled with `D` or the toolbar button. The choice is remembered in
-`localStorage` and follows you across every page and course.
+`localStorage` and follows you across every page and collection.
 
 | Theme | Use |
 |---|---|
@@ -127,6 +131,12 @@ Three themes, cycled with `D` or the toolbar button. The choice is remembered in
 Every colour comes from CSS custom properties defined in three blocks at the top of
 `engine/deck.css`. To add a fourth theme, copy one block, change the values, and add an entry
 to `THEMES` in `engine/deck.js` and `engine/theme.js`.
+
+## Fonts
+
+Three presets, cycled with `G` or the toolbar button, same `localStorage` persistence as the
+theme: `sans` (Inter throughout), `serif` (Source Serif 4 throughout), `display` (a condensed
+Bebas Neue headline over an Inter body). See "Fonts" in `AUTHORING.md` to add a fourth.
 
 ## Screenshots
 
@@ -141,6 +151,6 @@ change does not appear, bump that number in the three HTML pages.
 
 ## Authoring
 
-`AUTHORING.md` is the full feature reference: every slide type, every block, timing, themes, keys and the test script. Read it before adding a course or a class.
+`AUTHORING.md` is the full feature reference: every slide type, every block, timing, themes, keys and the test script. Read it before adding a collection or a deck.
 
 A Claude skill lives in `.claude/skills/teaching-decks/` and is also installed at `~/.claude/skills/teaching-decks/`, so it is available in any session.

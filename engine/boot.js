@@ -1,10 +1,10 @@
-/* Loads a course definition and one class's content, then starts the engine.
-   Everything is driven by the URL: deck.html?course=<id>&class=<n>
-   Adding a class means adding a data file and a line in that course's course.js. */
+/* Loads a collection definition and one deck's content, then starts the engine.
+   Everything is driven by the URL: deck.html?collection=<id>&deck=<n>
+   Adding a deck means adding a data file and a line in that collection's collection.js. */
 (function(){
-  const qs     = new URLSearchParams(location.search);
-  const course = qs.get('course');
-  const n      = Math.max(1, +qs.get('class') || 1);
+  const qs         = new URLSearchParams(location.search);
+  const collection = qs.get('collection');
+  const n          = Math.max(1, +qs.get('deck') || 1);
 
   const load = src => new Promise((res, rej) => {
     const el = document.createElement('script');
@@ -18,21 +18,21 @@
     document.getElementById('stage').innerHTML =
       '<section class="slide live" style="display:flex"><p class="kicker">Nothing to show</p>' +
       '<h2>' + msg + '</h2>' +
-      '<p class="lead"><a href="index.html">Back to all courses</a></p></section>';
+      '<p class="lead"><a href="index.html">Back to all collections</a></p></section>';
   };
 
-  if(!course) return fail('No course was given in the address.');
+  if(!collection) return fail('No collection was given in the address.');
 
-  const base = 'courses/' + course + '/';
+  const base = 'collections/' + collection + '/';
 
-  load(base + 'course.js')
+  load(base + 'collection.js')
     .then(() => {
-      const C = window.COURSE;
-      if(!C || !C.classes || !C.classes[n-1]) throw new Error('Class ' + n + ' is not listed in ' + course);
-      return load(base + 'content/' + C.classes[n-1].data);
+      const C = window.COLLECTION;
+      if(!C || !C.decks || !C.decks[n-1]) throw new Error('Deck ' + n + ' is not listed in ' + collection);
+      return load(base + 'content/' + C.decks[n-1].data);
     })
     .then(() => {
-      if(!window.DECK) throw new Error('That class file did not define any slides.');
+      if(!window.DECK) throw new Error('That deck file did not define any slides.');
       window.startDeck();
     })
     .catch(e => fail(e.message));

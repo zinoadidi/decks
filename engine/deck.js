@@ -1,7 +1,7 @@
 /* Deck engine. No dependencies. Started by boot.js once the content is loaded. */
 window.startDeck = function(){
-  /* build the slides from this class's content file, then run the engine */
-  if(window.DECK && window.AD051) window.AD051.render(window.DECK, 'stage');
+  /* build the slides from this deck's content file, then run the engine */
+  if(window.DECK && window.RENDER) window.RENDER.render(window.DECK, 'stage');
 
   const IMG = {
     u: 'https://docs.unity3d.com/2022.3/Documentation/uploads/Main/',
@@ -10,7 +10,7 @@ window.startDeck = function(){
   };
 
   /* expand data-img="u:file.png" into a vendor source; anything else (a relative
-     or absolute path) is used as-is, so a course's own project art works too */
+     or absolute path) is used as-is, so a collection's own project art works too */
   document.querySelectorAll('img[data-img]').forEach(img=>{
     const raw = img.dataset.img;
     const m = /^([a-z]):(.+)$/.exec(raw);
@@ -104,22 +104,22 @@ window.startDeck = function(){
   setInterval(()=>{ if(t0 !== null) paintClock(); }, 1000);
 
   /* ---------- cross-deck navigation ---------- */
-  const C  = window.COURSE || {classes:[]};
-  const CL = C.classes || [];
+  const C  = window.COLLECTION || {decks:[]};
+  const CL = C.decks || [];
   const qs = new URLSearchParams(location.search);
-  const idx = Math.max(0, (+qs.get('class') || 1) - 1);
-  const classUrl = n => 'deck.html?course=' + encodeURIComponent(C.id) + '&class=' + (n+1);
-  const courseUrl = 'course.html?course=' + encodeURIComponent(C.id);
-  const goClass = n => { if(CL[n]) location.href = classUrl(n); };
+  const idx = Math.max(0, (+qs.get('deck') || 1) - 1);
+  const deckUrl = n => 'deck.html?collection=' + encodeURIComponent(C.id) + '&deck=' + (n+1);
+  const collectionUrl = 'collection.html?collection=' + encodeURIComponent(C.id);
+  const goDeck = n => { if(CL[n]) location.href = deckUrl(n); };
 
   const ovPanel = document.getElementById('overview');
   if(CL.length){
     const sw = document.createElement('div');
     sw.className = 'ov-switch';
     sw.innerHTML =
-      '<a class="ov-home" href="index.html">All courses</a>' +
-      '<a class="ov-home" href="' + courseUrl + '">' + (C.name||'This course') + '</a>' +
-      CL.map((c,n)=>'<a class="ov-cls'+(n===idx?' cur':'')+'" href="'+classUrl(n)+'">'+
+      '<a class="ov-home" href="index.html">All collections</a>' +
+      '<a class="ov-home" href="' + collectionUrl + '">' + (C.name||'This collection') + '</a>' +
+      CL.map((c,n)=>'<a class="ov-cls'+(n===idx?' cur':'')+'" href="'+deckUrl(n)+'">'+
         c.label+'<b>'+c.title+'</b></a>').join('');
     ovPanel.insertBefore(sw, ovPanel.firstChild);
   }
@@ -156,9 +156,9 @@ window.startDeck = function(){
     else if(k==='Home'){ show(0); }
     else if(k==='End'){ show(slides.length-1); }
     else if(k==='o'||k==='O'){ overview.classList.toggle('on'); }
-    else if(k==='h'||k==='H'){ location.href = courseUrl; }
-    else if(k==='['){ goClass(idx-1); }
-    else if(k===']'){ goClass(idx+1); }
+    else if(k==='h'||k==='H'){ location.href = collectionUrl; }
+    else if(k==='['){ goDeck(idx-1); }
+    else if(k===']'){ goDeck(idx+1); }
     else if(k==='n'||k==='N'){ notesOn=!notesOn; notes.classList.toggle('on', notesOn); }
     else if(k==='t'||k==='T'){ t0 = (t0===null) ? Date.now() : null; paintClock(); }
     else if(k==='d'||k==='D'){ nextTheme(); }
@@ -237,7 +237,7 @@ window.startDeck = function(){
     applyFont(FONTS[(fontIndex(cur) + 1) % FONTS.length].id, true);
   }
 
-  /* a class can set a default font (meta.font) for first-time visitors; an explicit
+  /* a deck can set a default font (meta.font) for first-time visitors; an explicit
      choice already saved in localStorage always wins */
   let savedFont = null;
   try{ savedFont = localStorage.getItem('deck-font'); }catch(_){}
@@ -245,7 +245,7 @@ window.startDeck = function(){
 
   /* ---------- hud buttons ---------- */
   const bh = document.getElementById('b-home');
-  if(bh) bh.onclick = ()=> location.href = courseUrl;
+  if(bh) bh.onclick = ()=> location.href = collectionUrl;
   document.getElementById('b-prev').onclick = prev;
   document.getElementById('b-next').onclick = next;
   document.getElementById('b-ov').onclick   = ()=> overview.classList.toggle('on');
