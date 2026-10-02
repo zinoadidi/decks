@@ -1,0 +1,26 @@
+/* Shared styling for the course index and class index pages. */
+body{overflow:auto}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:clamp(34px,7vh,80px) clamp(20px,5vw,40px) 70px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px;margin-top:30px}
+.tile{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);
+      border-radius:18px;padding:26px;transition:.25s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.tile:hover{transform:translateY(-5px);border-color:var(--a1);box-shadow:var(--shadow)}
+.tile::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.tile.a2::before{background:linear-gradient(90deg,var(--a2),var(--a3))}
+.tile.a3::before{background:linear-gradient(90deg,var(--a3),var(--a5))}
+.tile .n{font-family:var(--mono);font-size:.78rem;color:var(--a1);letter-spacing:.14em;margin-bottom:10px}
+.tile.a2 .n{color:var(--a2)} .tile.a3 .n{color:var(--a3)}
+.tile h3{font-size:1.3rem;margin:0 0 8px;color:var(--ink)}
+.tile p{font-size:.98rem;margin:0;max-width:44ch}
+.tile .st{margin-top:16px;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--a4)}
+.backlink{display:inline-block;margin-bottom:18px;font-size:.92rem;color:var(--ink-dim);text-decoration:none}
+.backlink:hover{color:var(--a1)}
+
+/* theme button on the index and course pages */
+#theme-btn{
+  position:fixed;right:22px;bottom:22px;z-index:60;width:42px;height:42px;
+  border-radius:12px;border:1px solid var(--line-2);background:var(--panel);
+  color:var(--ink-dim);font-size:1.05rem;cursor:pointer;font-family:var(--font);
+  display:grid;place-items:center;transition:.2s
+}
+#theme-btn:hover{color:var(--ink);border-color:var(--a1);transform:translateY(-2px)}

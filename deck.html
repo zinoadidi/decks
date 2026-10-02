@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Serif+4:wght@400;600;700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="engine/deck.css">
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="bar"></div>
+<div id="crumb"></div>
+<div class="clock" id="clock"></div>
+<div id="hud">
+  <button id="b-home" title="This course (H)">⌂</button>
+  <button id="b-prev" title="Previous (←)">←</button>
+  <div id="counter">1 / 1</div>
+  <button id="b-next" title="Next (→)">→</button>
+  <button id="b-ov" title="Overview (O)">▦</button>
+  <button id="b-notes" title="Presenter notes (N)">✎</button>
+  <button id="b-theme" title="Theme (D)">◐</button>
+  <button id="b-font" title="Font (G)">A</button>
+  <button id="b-help" title="Shortcuts (?)">?</button>
+</div>
+
+<div id="overview"><h2>All slides</h2><div class="ov-grid"></div></div>
+<div id="notes"></div>
+<div id="lightbox"><img alt="Enlarged screenshot"></div>
+
+<div id="help"><div class="help-box">
+  <h3>Keyboard</h3>
+  <div class="help-row"><span>Next step or slide</span><kbd>→ / Space</kbd></div>
+  <div class="help-row"><span>Previous slide</span><kbd>←</kbd></div>
+  <div class="help-row"><span>Reveal</span><kbd>R</kbd></div>
+  <div class="help-row"><span>Overview grid</span><kbd>O</kbd></div>
+  <div class="help-row"><span>This course</span><kbd>H</kbd></div>
+  <div class="help-row"><span>Previous / next class</span><kbd>[ / ]</kbd></div>
+  <div class="help-row"><span>Presenter notes</span><kbd>N</kbd></div>
+  <div class="help-row"><span>Timer</span><kbd>T</kbd></div>
+  <div class="help-row"><span>Theme: dark, light, ember</span><kbd>D</kbd></div>
+  <div class="help-row"><span>Font: sans, serif</span><kbd>G</kbd></div>
+  <div class="help-row"><span>Fullscreen</span><kbd>F</kbd></div>
+  <div class="help-row" style="border:0"><span>Close</span><kbd>Esc</kbd></div>
+</div></div>
+
+<script src="engine/render.js?v=9"></script>
+<script src="engine/deck.js?v=9"></script>
+<script src="engine/boot.js?v=7"></script>
+</body>
+</html>

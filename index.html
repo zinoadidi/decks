@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Courses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Serif+4:wght@400;600;700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="engine/deck.css">
+<link rel="stylesheet" href="engine/pages.css">
+<script src="engine/theme.js?v=7"></script>
+</head>
+<body>
+<div class="shapes" style="position:fixed">
+  <div class="sh blob" style="width:480px;height:480px;background:var(--a2);left:-120px;top:-120px"></div>
+  <div class="sh blob" style="width:400px;height:400px;background:var(--a1);right:-100px;bottom:-100px"></div>
+  <div class="sh ring float" style="width:300px;height:300px;right:12%;top:18%;color:var(--a1)"></div>
+</div>
+<div class="wrap">
+  <p class="kicker">Teaching decks</p>
+  <h1>Courses</h1>
+  <div class="rule"></div>
+  <div class="tiles" id="tiles"></div>
+</div>
+<script src="courses.js?v=7"></script>
+<script>
+  document.getElementById('tiles').innerHTML = (window.COURSES||[]).map(c =>
+    '<a class="tile a'+(c.accent||1)+'" href="course.html?course='+encodeURIComponent(c.id)+'">' +
+      '<div class="n">'+(c.year||'')+'</div>' +
+      '<h3>'+c.name+'</h3>' +
+      '<p>'+(c.subtitle||'')+'</p>' +
+      '<div class="st">'+c.classes+' '+(c.classes===1?'class':'classes')+'</div>' +
+    '</a>').join('') || '<p>No courses listed in courses.js yet.</p>';
+</script>
+</body>
+</html>

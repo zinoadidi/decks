@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+node_modules/
+# game content, not public, pending migration to the CRUD backend
+courses/gliderverse/
