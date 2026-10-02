@@ -108,10 +108,8 @@ window.startDeck = function(){
   const CL = C.decks || [];
   const qs = new URLSearchParams(location.search);
   const idx = Math.max(0, (+qs.get('deck') || 1) - 1);
-  const token = qs.get('token');
-  const tokenQS = token ? '&token=' + encodeURIComponent(token) : '';
-  const deckUrl = n => 'deck.html?collection=' + encodeURIComponent(C.id) + '&deck=' + (n+1) + tokenQS;
-  const collectionUrl = 'collection.html?collection=' + encodeURIComponent(C.id) + tokenQS;
+  const deckUrl = n => 'deck.html?collection=' + encodeURIComponent(C.id) + '&deck=' + (n+1);
+  const collectionUrl = 'collection.html?collection=' + encodeURIComponent(C.id);
   const goDeck = n => { if(CL[n]) location.href = deckUrl(n); };
 
   const ovPanel = document.getElementById('overview');
