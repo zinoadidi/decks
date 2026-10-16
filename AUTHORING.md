@@ -6,6 +6,7 @@ The engine is data-driven: three generic HTML pages render every collection from
 data files. **You never write HTML for a collection.**
 
 - [Adding a collection](#adding-a-collection)
+- [Private decks, not committed to this repo](#private-decks-not-committed-to-this-repo)
 - [Adding a deck](#adding-a-deck)
 - [Slide types](#slide-types)
 - [Blocks](#blocks)
@@ -57,6 +58,61 @@ inside `content/` and is what actually gets loaded.
 ```
 
 `accent` is 1, 2 or 3 and only picks the colour stripe on the tile.
+
+---
+
+## Private decks, not committed to this repo
+
+This repo is public (it deploys to GitHub Pages on every push to `main`). A deck with content
+that should not be public, someone's own business case, a client's roadmap, anything with real
+names or numbers in it, should not go through `collections/<id>/` at all.
+
+`engine/boot.js` already has a fallback for exactly this, read its own comment first. If
+`deck.html?collection=<id>&deck=<n>` cannot load a local `collections/<id>/collection.js`, it
+falls back to fetching the collection and deck as JSON from a shared backend (the
+`generic-crud` store used by other projects in this workspace, see
+`generic-crud-backend/API.md` for the full API). The URL never changes between a locally
+committed collection and a backend-hosted one, that is the whole point: write the deck once,
+decide afterwards whether its data lives in git or in the store.
+
+**To host a deck on the backend instead of committing it:**
+
+1. Write the collection and deck exactly as below (`collections/<id>/collection.js` and
+   `content/deck-N.js`), test it locally the normal way (serve the folder, open
+   `deck.html?collection=<id>&deck=N`).
+2. Convert each file's `window.COLLECTION` / `window.DECK` object to plain JSON (they already
+   are plain data, just strip the `window.X = ... ;` wrapper):
+   ```bash
+   node -e "global.window={}; require('./collections/<id>/collection.js');
+     require('fs').writeFileSync('/tmp/<id>.collection.json', JSON.stringify(window.COLLECTION))"
+   node -e "global.window={}; require('./collections/<id>/content/deck-1.js');
+     require('fs').writeFileSync('/tmp/<id>.deck-1.json', JSON.stringify(window.DECK))"
+   ```
+3. `PUT` each one to the store, doc ids are `<id>.collection` and `<id>.deck-<n>` (this exact
+   naming is what `boot.js` requests, not a convention you can change per deck):
+   ```bash
+   B=https://generic-crud.agreeabledesert-b2caaf68.norwayeast.azurecontainerapps.io/generic-crud
+   A=7d125c22-d3bf-480f-bc09-af3c16aff513   # the one shared app id boot.js uses, same for every deck
+   curl -X PUT "$B/api/store/$A/<id>.collection" -H 'content-type: application/json' \
+     -d "{\"doc\": $(cat /tmp/<id>.collection.json)}"
+   curl -X PUT "$B/api/store/$A/<id>.deck-1" -H 'content-type: application/json' \
+     -d "{\"doc\": $(cat /tmp/<id>.deck-1.json)}"
+   ```
+4. **Do not** add the collection's folder to git, and **do not** add a line for it in
+   `collections.js` (that file is only the public index on `index.html`; a backend-hosted deck
+   is reachable by its direct URL without being listed anywhere). Leave the local
+   `collections/<id>/` folder on disk, untracked, as the editable source of truth.
+5. The live link is `https://<pages-host>/deck.html?collection=<id>&deck=1`, same engine code,
+   same keys and themes, the content just comes from the store instead of a file in the repo.
+
+**This shared app id may already be locked.** If a `PUT` comes back `401 invalid or missing app
+token`, someone set a passphrase on this namespace earlier (see "App locks" in
+`generic-crud-backend/API.md`), and every write needs `-H "x-app-token: <that passphrase>"`.
+Find the passphrase before writing, do not create a second app id to route around a lock someone
+else set on purpose, that fragments the one shared namespace the comment in `boot.js` describes.
+
+Re-run step 3 whenever the deck's content changes, there is no separate "publish" step, the
+store is the live version the moment the `PUT` succeeds.
 
 ---
 
@@ -502,11 +558,61 @@ press `G` again. `meta.font` only sets what a brand-new visitor sees on their ve
 deck, trigger the browser's print dialog, and save as PDF. The toolbar, clock, overview, and
 notes panel are hidden automatically, build-in (`seq`) content is forced visible so the
 printed page is not missing anything that was still waiting on a `→` press, and the
-background shapes are hidden. This is the supported path to a PDF.
+background shapes are hidden. `engine/deck.css` sets `@page{size:20in 11.25in;margin:0}`,
+the deck's own 1920x1080px at 96dpi, so the printed page matches the deck's actual aspect
+ratio (widescreen) instead of falling back to the browser's default portrait Letter/A4, which
+would otherwise print the 16:9 slide shrunk into a tall page with blank space below it. This
+is the supported path to a PDF, for a human at the keyboard using the browser's own print
+dialog.
 
 Flashcard answers (`reveal` blocks) stay hidden in the printed output, since they're meant
 to be hidden until asked for; print a deck using flashcards only after reading through it if
 you want the answers included too.
+
+### Automated export and the font-fallback pitfall
+
+Driving a plain `chrome --headless --print-to-pdf` from a script (instead of a person using
+the print dialog) can silently embed the wrong font. Google Fonts load over the network, and
+a headless print can capture the page before a given weight or character has finished
+loading; the browser falls through the CSS font stack to the OS system font for whatever
+hasn't resolved (`-apple-system` / `BlinkMacSystemFont` on a Mac), invisibly on screen but
+permanently once it's rasterized into a PDF. `--virtual-time-budget` does not fix this
+reliably, it budgets JS timers, not real network fetches.
+
+Two separate things caused this in practice, worth knowing about since they recur:
+
+- **Any non-ASCII `ic:` icon character** (an emoji, a dingbat like ★ ◆ ⚔, a checkmark) is
+  outside the Latin subset the loaded webfonts actually ship, so the browser always falls
+  back to a different font to render just that glyph, load-timing aside. This is normal CSS
+  behaviour, not a bug, and several collections already rely on it deliberately for icons. It
+  only becomes a *problem* worth avoiding when the output needs to be a deterministic, embedded
+  PDF (a graded submission, something sent to someone else) and the inconsistent fallback font
+  would be visible; for anything print-critical, prefer a plain ASCII `ic:` (letters, `+`,
+  `-`, `$`, digits) over a symbol.
+- **Engine-level decorative characters are not immune.** `.flow .step::after` used to render
+  its connector as `content:'→'` / `content:'↓'`, a Unicode arrow that no loaded webfont
+  (Inter, JetBrains Mono) actually contains, so it fell back the same way on every deck using
+  a `flow` block, not just one with a custom icon. The fix was to stop depending on a glyph at
+  all and draw the arrow as a CSS border-triangle instead, the same technique `.sh.tri` in the
+  background-shapes system already uses. Reach for this whenever a connector or bullet needs
+  to render identically regardless of what fonts happen to be loaded.
+
+Diagnose a suspect PDF with poppler's `pdffonts <file>.pdf`: every row should read `Inter-*`
+or `JetBrainsMono-*`; a `.SFNS-*`, `Menlo-*`, `Helvetica` or similar system-font row names the
+exact glyph that fell back, usually enough to find the offending character with
+`grep -nP "[^\x00-\x7F]"` over the deck's content file.
+
+For a reliable automated export, use `tools/export-pdf.mjs` instead of a bare
+`--print-to-pdf` call. It drives Chrome over the DevTools protocol and explicitly awaits
+`document.fonts.ready` before calling `Page.printToPDF`, removing the race rather than just
+giving it a bigger timeout:
+
+```bash
+node tools/export-pdf.mjs "http://localhost:8778/deck.html?collection=<id>&deck=1" out.pdf
+```
+
+Needs a local server already running (`python3 -m http.server 8778`) and Chrome installed at
+the usual macOS path; both are hardcoded at the top of the script.
 
 There's no in-browser export straight to `.pptx`. If a `.pptx` is genuinely needed rather
 than a PDF, the practical route is to export the PDF as above, then convert pages to images

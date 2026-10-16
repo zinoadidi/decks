@@ -45,6 +45,24 @@ decks/
 `collections/demo101/content/deck-1.js` is a living example: one slide per block type, each
 showing the data that produced it. Read it when you need to see a block in use.
 
+## Keeping a deck private
+
+This repo is public and auto-deploys to GitHub Pages on every push to `main`. **Before
+writing a word of content, ask whether the deck itself should be public.** A deck about
+someone's own business, a client, or anything with real names, prices or numbers in it should
+not go into `collections/<id>/` or get a line in `collections.js` at all, both are served
+directly from the repo.
+
+Instead use the backend-hosted path: write and test the deck exactly the same way, locally,
+then push its data to the shared `generic-crud` store instead of committing the folder. Full
+recipe in "Private decks, not committed to this repo" in AUTHORING.md. The deck is reachable
+at the same `deck.html?collection=<id>&deck=N` URL either way, nothing in the engine changes,
+only where the data lives. Never commit, then "fix" the mistake by deleting the files in a
+later commit, the content is still sitting in the git history at that point, reachable by
+anyone who looks; use the backend path from the start if it needs to stay private, and if it
+already got committed, a history rewrite is the only real fix, done with the user's explicit
+go ahead, never on your own initiative.
+
 ## Writing a deck
 
 Work from the notes, not from scratch. If the user has source material (a PDF, a prior
@@ -122,6 +140,18 @@ uses screenshots.
 
 If you edited anything in `engine/`, bump the `?v=N` on the shared assets in all three HTML
 pages, or the browser will serve the old file and your change will look like a no-op.
+
+## Exporting to PDF
+
+A person can always print a deck themselves (open it, use the browser's own print dialog),
+`engine/deck.css` already sets the page size to match the deck so this comes out as proper
+widescreen pages. Doing this yourself, non-interactively, is a different story: a bare
+`chrome --headless --print-to-pdf` can capture a page before a web font finishes loading,
+silently embedding a system font for whatever glyph didn't resolve in time, most often an
+`ic:` icon or a `flow` arrow that isn't plain ASCII. Invisible on screen, permanent once it's
+in the PDF. Use `tools/export-pdf.mjs` instead, which waits for `document.fonts.ready` before
+capturing. Full writeup, including how to tell from the PDF itself whether this happened, in
+"Exporting" in AUTHORING.md.
 
 ## Screenshots
 
