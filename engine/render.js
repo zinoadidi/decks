@@ -117,7 +117,7 @@ window.RENDER = (function(){
        slide never fetches anything until it is played. */
     embed: b => {
       const e = embedInfo(b);
-      const cap = `<figcaption>${b.title?`<b>${b.title}</b>`:''}${b.cap?` ${b.cap}`:''}` +
+      const cap = b.bare ? '' : `<figcaption>${b.title?`<b>${b.title}</b>`:''}${b.cap?` ${b.cap}`:''}` +
         ` <a class="embed-open" href="${attr(b.src)}" target="_blank" rel="noopener">Open in a new tab</a></figcaption>`;
       const poster = b.blank ? '' : (b.poster || e.thumb);
       const body = e.kind==='video'
@@ -125,7 +125,7 @@ window.RENDER = (function(){
         : `<button class="embed-play${b.blank?' blank':''}" type="button" aria-label="Play ${attr(b.title||'video')}">` +
           (poster?`<img src="${attr(poster)}" alt="">`:'') + `<span class="embed-btn">&#9654;</span>` +
           (poster||b.blank?'':`<span class="embed-label">${b.title||'Play video'}</span>`) + `</button>`;
-      return `<figure class="embed${b.seq?' seq':''}" data-kind="${e.kind}" data-src="${attr(e.src)}"` +
+      return `<figure class="embed${b.full?' full':''}${b.seq?' seq':''}" data-kind="${e.kind}" data-src="${attr(e.src)}"` +
         ` data-title="${attr(b.title||'Video')}"${b.seq?' hidden':''}><div class="frame">${body}</div>${cap}</figure>`;
     },
 

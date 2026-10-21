@@ -393,7 +393,8 @@ loads as an iframe if the site allows framing. `kind` (`yt`, `vimeo`, `video`, `
 forces the choice, e.g. `kind:"video"` for a file URL with no extension, such as one from the
 files API. Iframes load on click, so nothing is fetched until played, and a video stops when
 you leave the slide. Add `poster` to override the YouTube thumbnail or give other sources one.
-`blank:true` shows a plain black frame with the play button instead of the video's thumbnail,
+`bare:true` drops the title, caption and link under the video. `full:true` makes the video as
+large as the slide allows (use it with `bare:true` on a video-only slide). `blank:true` shows a plain black frame with the play button instead of the video's thumbnail,
 so nothing of the video is visible until it is played.
 Needs network unless it is a local file.
 
