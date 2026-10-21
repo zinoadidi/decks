@@ -61,8 +61,18 @@ window.startDeck = function(){
   }
 
   /* ---------- navigation ---------- */
+  /* put every played embed back to its poster so a video stops when you leave the slide */
+  function stopEmbeds(){
+    document.querySelectorAll('figure.embed.playing').forEach(f=>{
+      f.classList.remove('playing');
+      f.querySelector('.frame').innerHTML = f._poster;
+    });
+    document.querySelectorAll('figure.embed video').forEach(v=>v.pause());
+  }
+
   function show(n, back){
     n = Math.max(0, Math.min(slides.length-1, n));
+    stopEmbeds();
     slides.forEach(s=>s.classList.remove('live','enter','enter-back'));
     const s = slides[n];
     s.classList.add('live', back ? 'enter-back' : 'enter');
@@ -144,11 +154,30 @@ window.startDeck = function(){
     else if(e.target.closest('#lightbox')) lb.classList.remove('on');
   });
 
+  /* ---------- video embeds ---------- */
+  document.addEventListener('click', e=>{
+    const btn = e.target.closest('figure.embed .embed-play');
+    if(!btn) return;
+    const f = btn.closest('figure.embed'), fr = f.querySelector('.frame');
+    f._poster = fr.innerHTML;
+    const el = document.createElement('iframe');
+    el.src = f.dataset.src;
+    el.title = f.dataset.title;
+    el.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+    el.allowFullscreen = true;
+    el.referrerPolicy = 'strict-origin-when-cross-origin';
+    fr.innerHTML = '';
+    fr.appendChild(el);
+    f.classList.add('playing');
+  });
+
   /* ---------- keys ---------- */
   document.addEventListener('keydown', e=>{
     if(e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
     const isSpace = (k === ' ' || e.code === 'Space');
+    /* a focused <video> keeps Space and the arrows for itself */
+    if(e.target.tagName==='VIDEO' && (isSpace||k==='ArrowLeft'||k==='ArrowRight')) return;
     if(lb.classList.contains('on') && (k==='Escape'||isSpace)){ lb.classList.remove('on'); e.preventDefault(); return; }
     if(k==='ArrowRight'||isSpace||k==='PageDown'){ e.preventDefault(); next(); }
     else if(k==='ArrowLeft'||k==='PageUp'){ e.preventDefault(); prev(); }

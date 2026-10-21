@@ -186,6 +186,20 @@ pre code{color:var(--ink-dim);font-weight:500}
 .chip.unreal{color:var(--unreal);border-color:color-mix(in srgb,var(--unreal) 50%,transparent)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 
+/* ---------- video embeds ---------- */
+figure.embed{width:min(100%,calc(56vh*16/9));margin:0 auto 22px}
+figure.embed .frame{position:relative;aspect-ratio:16/9;background:#000}
+figure.embed iframe,figure.embed video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.embed-play{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;
+  background:var(--panel2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:var(--ink)}
+.embed-play.blank{background:#000}
+.embed-play img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.embed-btn{position:relative;width:84px;height:84px;border-radius:50%;background:rgba(0,0,0,.66);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;padding-left:6px;transition:transform .2s}
+.embed-play:hover .embed-btn{transform:scale(1.1)}
+.embed-label{position:relative;font-weight:700}
+.embed-open{margin-left:10px;font-size:.85rem;color:var(--ink-faint);white-space:nowrap}
+
 /* ---------- screenshots ---------- */
 figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
 figure img{display:block;width:100%;height:auto;background:var(--panel2)}
@@ -275,6 +289,7 @@ figure.zoomable:hover img{transform:scale(1.015)}
   .slide{display:block!important;position:relative;page-break-after:always;min-height:100vh;animation:none!important}
   .seq[hidden]{display:block!important}
   #hud,#bar,#crumb,#overview,#notes,.clock{display:none!important}
+  .embed-open{display:none}
 }
 
 /* ============ shapes & colour ============ */

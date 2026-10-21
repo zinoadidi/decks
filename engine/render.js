@@ -31,6 +31,29 @@ window.RENDER = (function(){
 
   const shapes = k => k ? `<div class="shapes">${shapeSets[k]||''}</div>` : '';
 
+  /* ---------- video embeds ---------- */
+  /* Turns any video URL into {kind, src, thumb}. kind is yt, vimeo, video (a file the
+     <video> tag plays) or iframe (any other page). b.kind forces one. */
+  function embedInfo(b){
+    const u = String(b.src||'').trim();
+    let m;
+    if(!b.kind || b.kind==='yt'){
+      m = u.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/))([\w-]{11})/);
+      if(m){
+        const t = u.match(/[?&#](?:t|start)=(\d+)/);
+        return { kind:'yt', thumb:'https://i.ytimg.com/vi/'+m[1]+'/hqdefault.jpg',
+          src:'https://www.youtube-nocookie.com/embed/'+m[1]+'?autoplay=1&rel=0&playsinline=1'+(t?'&start='+t[1]:'') };
+      }
+    }
+    if(!b.kind || b.kind==='vimeo'){
+      m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      if(m) return { kind:'vimeo', thumb:'', src:'https://player.vimeo.com/video/'+m[1]+'?autoplay=1' };
+    }
+    if(b.kind==='video' || (!b.kind && /\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(u)))
+      return { kind:'video', thumb:'', src:u };
+    return { kind:'iframe', thumb:'', src:u };
+  }
+
   /* ---------- block renderers ---------- */
   const B = {
     p: b => `<p class="${b.big?'bigp':''}${b.full?' full':b.wide?' wide':''}${b.justify?' justify':''}${b.seq?' seq':''}"${b.seq?' hidden':''}>${b.html}</p>`,
@@ -88,6 +111,23 @@ window.RENDER = (function(){
       `<figure><img data-img="${attr(b.img)}" alt="${attr(b.alt||'')}">` +
       (b.cap?`<figcaption>${b.cap}</figcaption>`:'') + `</figure>` +
       `<div>${blocks(b.blocks)}</div></div>`,
+
+    /* a video: YouTube, Vimeo, a video file, or any embeddable page. Title shows in the
+       caption. A file plays in place; the others show a poster and load on click so a
+       slide never fetches anything until it is played. */
+    embed: b => {
+      const e = embedInfo(b);
+      const cap = `<figcaption>${b.title?`<b>${b.title}</b>`:''}${b.cap?` ${b.cap}`:''}` +
+        ` <a class="embed-open" href="${attr(b.src)}" target="_blank" rel="noopener">Open in a new tab</a></figcaption>`;
+      const poster = b.blank ? '' : (b.poster || e.thumb);
+      const body = e.kind==='video'
+        ? `<video controls preload="metadata" playsinline src="${attr(e.src)}"${poster?` poster="${attr(poster)}"`:''}></video>`
+        : `<button class="embed-play${b.blank?' blank':''}" type="button" aria-label="Play ${attr(b.title||'video')}">` +
+          (poster?`<img src="${attr(poster)}" alt="">`:'') + `<span class="embed-btn">&#9654;</span>` +
+          (poster||b.blank?'':`<span class="embed-label">${b.title||'Play video'}</span>`) + `</button>`;
+      return `<figure class="embed${b.seq?' seq':''}" data-kind="${e.kind}" data-src="${attr(e.src)}"` +
+        ` data-title="${attr(b.title||'Video')}"${b.seq?' hidden':''}><div class="frame">${body}</div>${cap}</figure>`;
+    },
 
     opts: b => `<div class="opts">` + b.items.map(i=>
       `<div class="opt" data-k="${attr(i.k)}"><span class="k">${i.k.toUpperCase()}</span><span>${i.t}</span></div>`

@@ -377,6 +377,26 @@ Screenshots, or a grid of several images at once. See [Screenshots](#screenshots
 ]}
 ```
 
+### `embed`
+
+A video that plays inside the slide. Title and caption show under it, with an "Open in a new
+tab" link as the offline escape hatch.
+
+```js
+{b:"embed", src:"https://www.youtube.com/watch?v=VIDEOID", title:"Video title",
+ cap:"Optional line.", poster:"optional/poster.png", kind:"yt"}
+```
+
+`src` is detected: YouTube (watch, youtu.be, shorts, `t=` start time), Vimeo, a video file
+(`.mp4 .webm .mov .m4v .ogv`, plays in a `<video>` with controls), or any other URL, which
+loads as an iframe if the site allows framing. `kind` (`yt`, `vimeo`, `video`, `iframe`)
+forces the choice, e.g. `kind:"video"` for a file URL with no extension, such as one from the
+files API. Iframes load on click, so nothing is fetched until played, and a video stops when
+you leave the slide. Add `poster` to override the YouTube thumbnail or give other sources one.
+`blank:true` shows a plain black frame with the play button instead of the video's thumbnail,
+so nothing of the video is visible until it is played.
+Needs network unless it is a local file.
+
 ### `opts`
 
 Multiple-choice options, for flashcards.
